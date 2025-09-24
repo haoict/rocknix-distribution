@@ -5,7 +5,7 @@ SHELL ["/usr/bin/bash", "-c"]
 
 RUN apt-get update --fix-missing\
  && apt-get dist-upgrade -y \
- && apt-get install -y locales sudo
+ && apt-get install -y locales sudo nano
 
 RUN locale-gen en_US.UTF-8 \
  && update-locale LANG=en_US.UTF-8 LANGUAGE=en_US:en
@@ -13,9 +13,7 @@ ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
     LC_ALL=en_US.UTF-8
 
-RUN adduser --disabled-password --gecos '' docker \
- && adduser docker sudo \
- && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+RUN adduser docker && echo 'docker ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 RUN apt-get install -y \
     bc default-jre file gawk gcc git golang-go gperf libjson-perl libncurses5-dev \
@@ -24,7 +22,17 @@ RUN apt-get install -y \
     xmlstarlet libgl1-mesa-dev libxext-dev libwayland-dev wayland-protocols
 
 ### Cross compiling on ARM
-RUN if [ "$(uname -m)" = "aarch64" ]; then apt-get install -y --no-install-recommends qemu-user-binfmt libc6-dev-amd64-cross; fi
+RUN if [ "$(uname -m)" = "aarch64" ]; then \
+        dpkg --add-architecture amd64; \
+        echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ jammy main restricted universe multiverse" > /etc/apt/sources.list.d/amd64.list; \
+        echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ jammy-updates main restricted universe multiverse" >> /etc/apt/sources.list.d/amd64.list; \
+        echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse" >> /etc/apt/sources.list.d/amd64.list; \
+        echo "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ jammy-backports main restricted universe multiverse" >> /etc/apt/sources.list.d/amd64.list; \
+        apt-get update --fix-missing; \
+        apt-get install -y --no-install-recommends qemu-user-binfmt libc6-dev-amd64-cross libwayland-dev:amd64 libgl1-mesa-dev:amd64 libxext-dev:amd64 libc6-dev:amd64; \
+        mkdir -p /lib/x86_64--linux-gnu; \
+        ln -s /usr/lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64--linux-gnu/libc.so.6; \
+    fi
 RUN if [ ! -d /lib64 ]; then ln -sf /usr/x86_64-rocknix-linux-gnu/lib64 /lib64; fi
 RUN if [ ! -d /lib/x86_64-rocknix-linux-gnu ]; then ln -sf /usr/x86_64-rocknix-linux-gnu/lib /lib/x86_64-rocknix-linux-gnu; fi
 
