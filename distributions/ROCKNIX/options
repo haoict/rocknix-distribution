@@ -181,7 +181,7 @@
   DISTRO_SRC="https://github.com/ROCKNIX"
 
 # Default size of system partition, in MB, eg. 512
-  SYSTEM_SIZE=2048
+  SYSTEM_SIZE=300
 
 # Default system partition offset, in sectors, eg. 2048
   SYSTEM_PART_START=8192

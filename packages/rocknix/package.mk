@@ -71,6 +71,9 @@ EOF
   ### Take a backup of the system configuration on shutdown
   enable_service save-sysconfig.service
 
+  echo "HAO'S CUSTOMIZATIONS START"
+  echo "HAO'S CUSTOMIZATIONS END"
+
   sed -i "s#@DEVICENAME@#${DEVICE}#g" ${INSTALL}/usr/config/system/configs/system.cfg
 
   ### Defaults for non-main builds.

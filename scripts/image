@@ -326,4 +326,4 @@ if [ "${1}" = "release" -o "${1}" = "mkimage" ]; then
 fi
 
 rm -f ${TARGET_IMG}/*.kernel
-rm -f ${TARGET_IMG}/*.system
+# rm -f ${TARGET_IMG}/*.system
