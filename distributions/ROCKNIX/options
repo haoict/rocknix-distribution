@@ -187,7 +187,7 @@
   DISTRO_SRC="https://sources.libreelec.tv/$DISTRO_VERSION"
 
 # Default size of system partition, in MB, eg. 512
-  SYSTEM_SIZE=2048
+  SYSTEM_SIZE=300
 
 # Default system partition offset, in sectors, eg. 2048
   SYSTEM_PART_START=32768

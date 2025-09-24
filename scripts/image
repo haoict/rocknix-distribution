@@ -469,5 +469,5 @@ if [ -n "$(ls -1 ${BUILD}/qa_checks/ 2>/dev/null)" ]; then
   log_qa_check "qa_issues" "QA issues present, please fix!\n$(find ${BUILD}/qa_checks/* -type f ! -name qa_issues)\n"
 fi
 
-rm -f ${TARGET_IMG}/*.kernel
-rm -f ${TARGET_IMG}/*.system
+# rm -f ${TARGET_IMG}/*.kernel
+# rm -f ${TARGET_IMG}/*.system

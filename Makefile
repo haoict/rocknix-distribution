@@ -136,6 +136,8 @@ docker-%: $(shell ./scripts/get_env > .env)
 # If the user issues a `make docker-shell` just start up bash as the shell to run commands
 docker-shell: COMMAND=bash
 
+docker-shell-hao: COMMAND=bash -c "export PROJECT=ROCKNIX DEVICE=RK3566 ARCH=aarch64 BASE_ONLY=true && bash"
+
 # Command: builds and saves a docker builder image locally.
 # The build user must also be a member of the "docker" group.
 docker-image-build:

@@ -135,14 +135,16 @@ post_makeinstall_target() {
   safe_remove ${INSTALL}/usr/lib/udev/rules.d/71-seat.rules
   safe_remove ${INSTALL}/usr/lib/udev/rules.d/73-seat-late.rules
 
-  # remove getty units, we dont want a console
-  safe_remove ${INSTALL}/usr/lib/systemd/system/autovt@.service
-  safe_remove ${INSTALL}/usr/lib/systemd/system/console-getty.service
-  safe_remove ${INSTALL}/usr/lib/systemd/system/container-getty@.service
-  safe_remove ${INSTALL}/usr/lib/systemd/system/getty.target
-  safe_remove ${INSTALL}/usr/lib/systemd/system/getty@.service
-  safe_remove ${INSTALL}/usr/lib/systemd/system/serial-getty@.service
-  safe_remove ${INSTALL}/usr/lib/systemd/system/*.target.wants/getty.target
+  if [ "${LOCAL_LOGIN}" = "no" ]; then
+    # remove getty units, we dont want a console
+    safe_remove ${INSTALL}/usr/lib/systemd/system/autovt@.service
+    safe_remove ${INSTALL}/usr/lib/systemd/system/console-getty.service
+    safe_remove ${INSTALL}/usr/lib/systemd/system/container-getty@.service
+    safe_remove ${INSTALL}/usr/lib/systemd/system/getty.target
+    safe_remove ${INSTALL}/usr/lib/systemd/system/getty@.service
+    safe_remove ${INSTALL}/usr/lib/systemd/system/serial-getty@.service
+    safe_remove ${INSTALL}/usr/lib/systemd/system/*.target.wants/getty.target
+  fi
 
   # remove other notused or nonsense stuff (our /etc is ro)
   safe_remove ${INSTALL}/usr/lib/systemd/systemd-update-done
@@ -213,6 +215,11 @@ post_makeinstall_target() {
   # tune logind.conf
   sed -e "s,^.*HandleLidSwitch=.*$,HandleLidSwitch=suspend,g" -i ${INSTALL}/etc/systemd/logind.conf
   sed -e "s,^.*HandlePowerKey=.*$,HandlePowerKey=suspend,g" -i ${INSTALL}/etc/systemd/logind.conf
+
+  if [ "${LOCAL_LOGIN}" = "yes" ]; then
+    sed -e "s,^.*NAutoVTs=.*$,NAutoVTs=2,g" -i ${INSTALL}/etc/systemd/logind.conf
+    sed -e "s,^.*ReserveVT=.*$,ReserveVT=6,g" -i ${INSTALL}/etc/systemd/logind.conf
+  fi
 
   # replace systemd-machine-id-setup with ours
   safe_remove ${INSTALL}/usr/lib/systemd/system/systemd-machine-id-commit.service
@@ -302,4 +309,7 @@ post_install() {
   enable_service systemd-timesyncd.service
   enable_service systemd-timesyncd-setup.service
   enable_service debug-shell.service
+  if [ "${LOCAL_LOGIN}" = "yes" ]; then
+    enable_service getty@tty0.service
+  fi
 }

@@ -58,6 +58,10 @@ PKG_CONFIGURE_OPTS_TARGET="${UTILLINUX_CONFIG_DEFAULT} \
                            --enable-schedutils \
                            --enable-lscpu"
 
+if [ "${LOCAL_LOGIN}" = "yes" ]; then
+  PKG_CONFIGURE_OPTS_TARGET+=" --enable-agetty"
+fi
+
 if [ "${SWAP_SUPPORT}" = "yes" ]; then
   PKG_CONFIGURE_OPTS_TARGET+=" --enable-swapon"
 fi
